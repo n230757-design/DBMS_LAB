@@ -73,61 +73,44 @@ VALUES
 (1005,105,'Web Design Projects','Business',750000.00,'2026-03-31','2025-2026'),
 (1006,106,'Professional Consulting','Business',1500000.00,'2026-03-31','2025-2026');
 SELECT *FROM Income_Record;
-/*INSERT-Add a new taxpayer*/
 INSERT INTO Taxpayer
 (taxpayer_id,pan_number,full_name,date_of_birth,occupation,annual_income,email,is_active)
 VALUES
 (107,'GHJKL7890M','Rahul','1997-09-20','Chartered Accountant',980000.00,'rahul@example.com',TRUE);
-/*UPDATE-Change Ravi Kumars annual income to 950000.00*/
 UPDATE Taxpayer
 SET annual_income=950000.00
 WHERE taxpayer_id=101;
-/*UPDATE-CHange Kiran rao Occupation*/
 UPDATE Taxpayer
 SET occupation='Software Concultant'
 WHERE taxpayer_id=105;
-/*UPDATE-Activate Meera Singh's Accountant*/
 UPDATE Taxpayer
 SET is_active=TRUE
 WHERE taxpayer_id=106;
-/*rmeove the newly added taxpayer*/
 DELETE FROM Taxpayer
 WHERE taxpayer_id=107;
-/*Add a new income category*/
 INSERT INTO Income_Category
 (category_id,category_name,description,taxable)
 VALUES
 (7,'Rental Income','Income earned from renting residential or commercial properties',TRUE);
-/*PART E-DDL MODIFICATION TASKS*/
 ALTER TABLE Income_record
 ADD remarks VARCHAR(200);
-
-/*Modify the size*/
 ALTER TABLE Taxpayer
 MODIFY occupation VARCHAR(100);
-
-/*create taxoffice table*/
 CREATE TABLE Tax_office(
 office_id INT PRIMARY KEY,
 office_name VARCHAR(100) NOT NULL,
 city VARCHAR(50) NOT NULL
 );
-
-/*insert two sample records*/
 INSERT INTO Tax_Office
 (office_id,office_name,city)
 VALUES 
 (1,'Income Tax office Hyderabad','Hyderabad'),
 (2,'Income Tax Office Vijayawada','Vijayawada');
-
-/*Trucate and delete*/
 SELECT * FROM Tax_Office;
 TRUNCATE Tax_office;
 SHOW TABLES;
 DROP TABLE Tax_Office;
 SHOW TABLES;
-
-/*CONSTRAINT EXPERIMENT*/
 INSERT INTO Taxpayer
 (taxpayer_id,pan_number,full_name,date_of_birth,occupation,annual_income,email,is_active)
 VALUES
@@ -140,140 +123,68 @@ INSERT INTO Taxpayer
 (taxpayer_id,pan_number,full_name,date_of_birth,occupation,annual_income,email,is_active)
 VALUES
 (109,'LMNOP5678Q',NULL,'1996-08-15','Manager',7000000.00,'manager@example.com',TRUE);
-/* ==========================================
-   PART A - REDESIGN THE DATABASE
-   ========================================== */
-
-/* Step 1: Remove old text columns */
-
 ALTER TABLE Income_Record
 DROP COLUMN category_name;
-
 ALTER TABLE Income_Record
 DROP COLUMN financial_year;
-
-
-/* Step 2: Add ID columns */
-
 ALTER TABLE Income_Record
 ADD category_id INT,
 ADD year_id INT;
-
-
-/* Step 3: Update existing records */
-
 UPDATE Income_Record
 SET category_id = 1
 WHERE income_id = 1001;
-
 UPDATE Income_Record
 SET category_id = 1
 WHERE income_id = 1002;
-
 UPDATE Income_Record
 SET category_id = 2
 WHERE income_id = 1003;
-
 UPDATE Income_Record
 SET category_id = 1
 WHERE income_id = 1004;
-
 UPDATE Income_Record
 SET category_id = 2
 WHERE income_id = 1005;
-
 UPDATE Income_Record
 SET category_id = 2
 WHERE income_id = 1006;
-
-
-/* All records belong to Financial Year 2025-2026 (year_id = 6) */
-
 UPDATE Income_Record
 SET year_id = 6;
-
-
-/* Step 4: Add Foreign Key Constraints */
-
 ALTER TABLE Income_Record
 ADD CONSTRAINT fk_taxpayer
 FOREIGN KEY (taxpayer_id)
 REFERENCES Taxpayer(taxpayer_id);
-
 ALTER TABLE Income_Record
 ADD CONSTRAINT fk_category
 FOREIGN KEY (category_id)
 REFERENCES Income_Category(category_id);
-
 ALTER TABLE Income_Record
 ADD CONSTRAINT fk_year
 FOREIGN KEY (year_id)
 REFERENCES Financial_Year(year_id);
-
-
-/* Verify */
-
 DESC Income_Record;
-
 SELECT * FROM Income_Record;
-/* Task 1 */
-
 INSERT INTO Income_Record
 VALUES
 (1007,999,'ABC Company',600000,'2026-03-20',NULL,1,6);
-
-/* ERROR - taxpayer_id does not exist */
-
-
-/* Task 2 */
-
 INSERT INTO Income_Record
 VALUES
 (1008,101,'ABC Company',500000,'2026-03-21',NULL,20,6);
-
-/* ERROR - category_id does not exist */
-
-
-/* Task 3 */
-
 INSERT INTO Income_Record
 VALUES
 (1009,101,'ABC Company',500000,'2026-03-21',NULL,1,15);
-
-/* ERROR - year_id does not exist */
-
-
-/* Task 4 */
-
 DELETE FROM Taxpayer
 WHERE taxpayer_id=101;
-
-/* ERROR - Child record exists */
-
-
-/* Task 5 */
-
 DELETE FROM Income_Category
 WHERE category_id=1;
-
-/* ERROR - Category is referenced */
--- 1. Unique occupations
 SELECT DISTINCT occupation
 FROM Taxpayer;
-
--- 2. Unique income categories
 SELECT DISTINCT category_name
 FROM Income_Category;
-
--- 3. Unique financial years
 SELECT DISTINCT year_label
 FROM Financial_Year;
-
--- 4. Unique income sources
 SELECT DISTINCT income_source
 FROM Income_Record;
--- 1. Salary OR Business taxpayers
-
 SELECT full_name
 FROM Taxpayer
 WHERE taxpayer_id IN
@@ -282,9 +193,7 @@ SELECT taxpayer_id
 FROM Income_Record
 WHERE category_id=1
 )
-
 UNION
-
 SELECT full_name
 FROM Taxpayer
 WHERE taxpayer_id IN
@@ -293,36 +202,20 @@ SELECT taxpayer_id
 FROM Income_Record
 WHERE category_id=2
 );
-
--------------------------------------------------
-
--- 2. Income sources in 2024-2025 UNION 2025-2026
-
 SELECT income_source
 FROM Income_Record
 WHERE year_id=5
-
 UNION
-
 SELECT income_source
 FROM Income_Record
 WHERE year_id=6;
-
--------------------------------------------------
-
--- 3. Teachers UNION Software Engineers
-
 SELECT full_name
 FROM Taxpayer
 WHERE occupation='Teacher'
-
 UNION
-
 SELECT full_name
 FROM Taxpayer
 WHERE occupation='Software Engineer';
--- 1. Salary AND Business taxpayers
-
 SELECT  DISTINCT taxpayer_id
 FROM Income_Record
 WHERE category_id=1
@@ -331,11 +224,6 @@ AND taxpayer_id IN
 SELECT taxpayer_id
 FROM Income_Record
 WHERE category_id=2);
-
--------------------------------------------------
-
--- 2. Income in both years
-
 SELECT DISTINCT taxpayer_id
 FROM Income_Record
 WHERE financial_year='2024-2025'
@@ -460,50 +348,29 @@ WHERE annual_income > ALL
     FROM Income_Record
     WHERE category_name='Business'
 );
--- 1
 SELECT *
 FROM Taxpayer
 ORDER BY full_name ASC;
-
--- 2
 SELECT *
 FROM Taxpayer
 WHERE annual_income > 800000;
-
--- 3
 SELECT *
 FROM Taxpayer
 WHERE occupation='Software Engineer';
-
--- 4
 SELECT *
 FROM Income_Record
 WHERE category_id=2;
-
--- 5
 SELECT *
 FROM Income_Record
 WHERE amount BETWEEN 500000 AND 1000000;
-
--- 6
 SELECT *
 FROM Taxpayer
 WHERE full_name LIKE 'A%';
-
--- 7
--- This requires a city/village column in Taxpayer.
--- If it doesn't exist, you can skip this query.
-
--- 8
 SELECT *
 FROM Taxpayer
 WHERE is_active=TRUE;
-
--- 9
 SELECT COUNT(*) AS Total_Taxpayers
 FROM Taxpayer;
-
--- 10
 SELECT MAX(annual_income) AS Highest_Income
 FROM Taxpayer;
 SELECT full_name
@@ -527,4 +394,3 @@ SELECT financial_year,COUNT(*) AS Total_Records
 FROM Income_Record
 GROUP BY financial_year
 ORDER BY Total_Records DESC;
-
