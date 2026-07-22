@@ -73,61 +73,44 @@ VALUES
 (1005,105,'Web Design Projects','Business',750000.00,'2026-03-31','2025-2026'),
 (1006,106,'Professional Consulting','Business',1500000.00,'2026-03-31','2025-2026');
 SELECT *FROM Income_Record;
-/*INSERT-Add a new taxpayer*/
 INSERT INTO Taxpayer
 (taxpayer_id,pan_number,full_name,date_of_birth,occupation,annual_income,email,is_active)
 VALUES
 (107,'GHJKL7890M','Rahul','1997-09-20','Chartered Accountant',980000.00,'rahul@example.com',TRUE);
-/*UPDATE-Change Ravi Kumars annual income to 950000.00*/
 UPDATE Taxpayer
 SET annual_income=950000.00
 WHERE taxpayer_id=101;
-/*UPDATE-CHange Kiran rao Occupation*/
 UPDATE Taxpayer
 SET occupation='Software Concultant'
 WHERE taxpayer_id=105;
-/*UPDATE-Activate Meera Singh's Accountant*/
 UPDATE Taxpayer
 SET is_active=TRUE
 WHERE taxpayer_id=106;
-/*rmeove the newly added taxpayer*/
 DELETE FROM Taxpayer
 WHERE taxpayer_id=107;
-/*Add a new income category*/
 INSERT INTO Income_Category
 (category_id,category_name,description,taxable)
 VALUES
 (7,'Rental Income','Income earned from renting residential or commercial properties',TRUE);
-/*PART E-DDL MODIFICATION TASKS*/
 ALTER TABLE Income_record
 ADD remarks VARCHAR(200);
-
-/*Modify the size*/
 ALTER TABLE Taxpayer
 MODIFY occupation VARCHAR(100);
-
-/*create taxoffice table*/
 CREATE TABLE Tax_office(
 office_id INT PRIMARY KEY,
 office_name VARCHAR(100) NOT NULL,
 city VARCHAR(50) NOT NULL
 );
-
-/*insert two sample records*/
 INSERT INTO Tax_Office
 (office_id,office_name,city)
 VALUES 
 (1,'Income Tax office Hyderabad','Hyderabad'),
 (2,'Income Tax Office Vijayawada','Vijayawada');
-
-/*Trucate and delete*/
 SELECT * FROM Tax_Office;
 TRUNCATE Tax_office;
 SHOW TABLES;
 DROP TABLE Tax_Office;
 SHOW TABLES;
-
-/*CONSTRAINT EXPERIMENT*/
 INSERT INTO Taxpayer
 (taxpayer_id,pan_number,full_name,date_of_birth,occupation,annual_income,email,is_active)
 VALUES
